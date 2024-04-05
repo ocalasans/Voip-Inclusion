@@ -80,7 +80,7 @@ new SV_DLSTREAM:lstream[MAX_PLAYERS] = { SV_NULL, ... };
 //
 static VII_voip_message[156],
     bool:VII_voip_created[MAX_PLAYERS] = SV_FALSE,
-    VII_voip_check_foreach[7] = 0;
+    VII_voip_check_foreach[7] = 0,
     VII_voip_max_players[MAX_PLAYERS],
     VII_voip_color[MAX_PLAYERS],
     VII_voip_name[MAX_PLAYERS][20];
@@ -794,7 +794,7 @@ $$$$$$$$\ $$ |  $$ |\$$$$$$$ |$$ |$$ |$$$$$$$  |$$ |  $$ |
 */
 
 stock Voip_Create(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
-    return Voip_Criar(VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid);
+    return Voip_Criar(VII_global, VII_distance, VII_max_players, VII_color, VII_name, playerid);
 //
 stock Voip_Delete(bool:VII_global, playerid)
     return Voip_Excluir(VII_global, playerid);
