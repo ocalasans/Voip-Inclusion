@@ -303,7 +303,7 @@ CMD:voipglobal(playerid)
 -----------------------
 
 ```pawn
-Voip_Jogador(GLOBAL_VOIP, 0xFFFFFFFF, "The administrator checked the server, and your local voip was found. Press the B key to speak.");
+Voip_Player(GLOBAL_VOIP, 0xFFFFFFFF, "The administrator checked the server, and your local voip was found. Press the B key to speak.");
 ```
 1 - <kbd>Define if it's global.</kbd>    
 2 - <kbd>Define the color.</kbd>    
