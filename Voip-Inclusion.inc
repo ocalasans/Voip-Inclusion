@@ -27,7 +27,7 @@
     Youtube: Calasans
     Instagram: ocalasans
 
-    SA:MP Programming Comunnity©: https://abre.ai/samp-spc
+    SA:MP Programming Community©: https://abre.ai/samp-spc
 */
 
 #if defined _voip_inclusion
