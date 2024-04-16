@@ -37,7 +37,7 @@ Nesta categoria, encontra-se a explicação de como utilizar todas as callbacks 
 -----------------------
 
 ```pawn
-Voip_Criar(NOT_GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local", playerid);
+native Voip_Criar(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a distância.</kbd>    
@@ -59,7 +59,7 @@ public OnPlayerConnect(playerid)
 -----------------------
 
 ```pawn
-Voip_Excluir(NOT_GLOBAL_VOIP, playerid);
+native Voip_Excluir(bool:VII_global, playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina o playerid (jogador).</kbd>
@@ -77,7 +77,7 @@ public OnPlayerDisconnect(playerid, reason)
 -----------------------
 
 ```pawn
-Voip_Distancia(NOT_GLOBAL_VOIP, 30.0, 0xFFFFFFFF, "Você ajustou a distância do seu voip para 30 metros.", playerid);
+native Voip_Distancia(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a distância.</kbd>    
@@ -98,7 +98,7 @@ CMD:voipdistancia(playerid)
 -----------------------
 
 ```pawn
-Voip_NaoEncontrado(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Seu voip não foi encontrado.", playerid);
+native Voip_NaoEncontrado(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
@@ -118,7 +118,7 @@ public OnPlayerSpawn(playerid)
 -----------------------
 
 ```pawn
-Voip_NaoMicrofone(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Seu microfone não foi detectado.", playerid);
+native Voip_NaoMicrofone(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
@@ -138,7 +138,7 @@ public OnPlayerSpawn(playerid)
 -----------------------
 
 ```pawn
-Voip_Global(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "O seu voip global foi carregado com sucesso. Pressione a tecla Z para falar.", playerid);
+native Voip_Global(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
@@ -158,7 +158,7 @@ public OnPlayerSpawn(playerid)
 -----------------------
 
 ```pawn
-Voip_Jogador(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "O seu voip local foi carregado com sucesso. Pressione a tecla B para falar.", playerid);
+native Voip_Jogador(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
@@ -184,13 +184,14 @@ Nesta categoria, encontra-se a explicação de como utilizar todas as callbacks 
 -----------------------
 
 ```pawn
-Voip_Criar(GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local");
+native Voip_Criar(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a distância.</kbd>    
 3 - <kbd>Defina o máximo de jogadores, SV_INFINITY é padrão.</kbd>    
 4 - <kbd>Defina a cor.</kbd>    
-5 - <kbd>Defina o nome.</kbd>
+5 - <kbd>Defina o nome.</kbd>    
+6 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -206,9 +207,10 @@ CMD:criarvoip(playerid)
 -----------------------
 
 ```pawn
-Voip_Excluir(GLOBAL_VOIP);
+native Voip_Excluir(bool:VII_global, playerid = INVALID_PLAYER_ID)
 ```
-1 - <kbd>Defina se é global.</kbd>
+1 - <kbd>Defina se é global.</kbd>    
+2 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -224,12 +226,13 @@ CMD:excluirvoip(playerid)
 -----------------------
 
 ```pawn
-Voip_Distancia(GLOBAL_VOIP, 30.0, 0xFFFFFFFF, "O administrador ajustou a distância do voip para 30 metros.");
+native Voip_Distancia(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a distância.</kbd>    
 3 - <kbd>Defina a cor.</kbd>    
-4 - <kbd>Defina a mensagem.</kbd>
+4 - <kbd>Defina a mensagem.</kbd>    
+5 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -245,11 +248,12 @@ CMD:voipdistancia(playerid)
 -----------------------
 
 ```pawn
-Voip_NaoEncontrado(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, mas o seu voip não foi encontrado.");
+native Voip_NaoEncontrado(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>
+3 - <kbd>Defina a mensagem.</kbd>    
+4 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -265,11 +269,12 @@ CMD:voipencontrado(playerid)
 -----------------------
 
 ```pawn
-Voip_NaoMicrofone(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, mas o seu microfone não foi detectado.");
+native Voip_NaoMicrofone(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>
+3 - <kbd>Defina a mensagem.</kbd>    
+4 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -285,11 +290,12 @@ CMD:voipmicrofone(playerid)
 -----------------------
 
 ```pawn
-Voip_Global(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, e seu voip global foi encontrado. Pressione a tecla Z para falar.");
+native Voip_Global(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>
+3 - <kbd>Defina a mensagem.</kbd>    
+4 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -305,11 +311,12 @@ CMD:voipglobal(playerid)
 -----------------------
 
 ```pawn
-Voip_Jogador(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, e seu voip local foi encontrado. Pressione a tecla B para falar.");
+native Voip_Jogador(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
 ```
 1 - <kbd>Defina se é global.</kbd>    
 2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>
+3 - <kbd>Defina a mensagem.</kbd>    
+4 - <kbd>Não defina o playerid, apague-o.</kbd>
 
 * Exemplo:
 ```pawn
@@ -327,7 +334,7 @@ CMD:voipjogador(playerid)
 ### Outras callbacks
 
 ```pawn
-Voip_Depurar(true);
+Voip_Depurar(bool:VII_debug = SV_FALSE)
 ```
 
 * Exemplo:
