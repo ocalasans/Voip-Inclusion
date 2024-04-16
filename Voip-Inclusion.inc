@@ -27,7 +27,7 @@
     Youtube: Calasans
     Instagram: ocalasans
 
-    SA:MP Programming Community©: https://abre.ai/samp-spc
+    SA:MP Programming Comunnity©: https://abre.ai/samp-spc
 */
 
 #if defined _voip_inclusion
@@ -796,7 +796,7 @@ $$$$$$$$\ $$ |  $$ |\$$$$$$$ |$$ |$$ |$$$$$$$  |$$ |  $$ |
 stock Voip_Create(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
     return Voip_Criar(VII_global, VII_distance, VII_max_players, VII_color, VII_name, playerid);
 //
-stock Voip_Delete(bool:VII_global, playerid)
+stock Voip_Delete(bool:VII_global, playerid = INVALID_PLAYER_ID)
     return Voip_Excluir(VII_global, playerid);
 //
 stock Voip_Distance(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
