@@ -1,358 +1,316 @@
-## Include Voip-Inclusion SA:MP
+# Voip-Inclusion
 
-Este include oferece uma integração simplificada do `Voip` em seu Gamemode, proporcionando flexibilidade incomparável. Com a capacidade de utilizar callbacks para alterações personalizadas e enviar mensagens aos jogadores, além de suporte global para todos os jogadores. É recomendável que você leia as categorias abaixo para ficar informado.
+Voip-Inclusion é uma biblioteca para integração simplificada do SAMPVOICE em seu Gamemode SA-MP, oferecendo máxima flexibilidade e controle sobre o sistema de comunicação por voz.
 
-English > [README](https://github.com/ocalasans/Voip-Inclusion/blob/main/README.eng.md).
+## Idiomas
 
------------------------
- 
-### Como instalar?
+- Deutsch: [README](translations/Deutsch/README.md)
+- English: [README](translations/English/README.md)
+- Español: [README](translations/Espanol/README.md)
+- Français: [README](translations/Francais/README.md)
+- Italiano: [README](translations/Italiano/README.md)
+- Polski: [README](translations/Polski/README.md)
+- Русский: [README](translations/Русский/README.md)
+- Svenska: [README](translations/Svenska/README.md)
+- Türkçe: [README](translations/Turkce/README.md)
 
-Você deve fazer o download do include. Depois de tê-lo feito, você deverá colocar o include na pasta (pawno > include). Após ter feito isso, abra o arquivo pwn do seu Gamemode e coloque o seguinte código abaixo dos seus outros includes:
+## Índice
+
+- [Voip-Inclusion](#voip-inclusion)
+  - [Idiomas](#idiomas)
+  - [Índice](#índice)
+  - [Instalação](#instalação)
+  - [Requisitos](#requisitos)
+  - [Características Principais](#características-principais)
+  - [Sistema Global x Individual](#sistema-global-x-individual)
+    - [GLOBAL\_VOIP](#global_voip)
+    - [NOT\_GLOBAL\_VOIP](#not_global_voip)
+  - [Configuração Básica](#configuração-básica)
+    - [Inicialização do Sistema](#inicialização-do-sistema)
+  - [Funções de Controle](#funções-de-controle)
+    - [Voip\_Create](#voip_create)
+    - [Voip\_Delete](#voip_delete)
+    - [Voip\_Distance](#voip_distance)
+  - [Funções de Feedback](#funções-de-feedback)
+    - [Voip\_NotFound](#voip_notfound)
+    - [Voip\_NoMicrophone](#voip_nomicrophone)
+    - [Voip\_Global](#voip_global)
+    - [Voip\_Player](#voip_player)
+  - [Funções de Stream](#funções-de-stream)
+    - [Voip\_GetGlobalStream](#voip_getglobalstream)
+    - [Voip\_GetLocalStream](#voip_getlocalstream)
+    - [Voip\_SetGlobalStream](#voip_setglobalstream)
+    - [Voip\_SetLocalStream](#voip_setlocalstream)
+  - [Exemplos de Uso](#exemplos-de-uso)
+    - [Configuração Completa](#configuração-completa)
+  - [Callbacks Personalizados](#callbacks-personalizados)
+  - [Licença](#licença)
+    - [Condições:](#condições)
+
+## Instalação
+
+1. Faça o download do arquivo [Voip-Inclusion.inc](https://github.com/ocalasans/Voip-Inclusion/releases/download/v1.0.1/Voip-Inclusion.inc)
+2. Coloque o arquivo na pasta `pawno/include` do seu servidor
+3. Adicione a seguinte linha após seus outros includes:
 ```pawn
 #include <Voip-Inclusion>
 ```
 
------------------------
+## Requisitos
 
-### Includes necessárias
+- [SAMPVOICE](https://github.com/CyberMor/sampvoice) versão 3.1 ou inferior (que seja compatível)
+- Plugin do SAMPVOICE ativado no `server.cfg`
 
-* [SAMPVOICE](https://github.com/CyberMor/sampvoice).
+> [!IMPORTANT]
+> Este include é compatível apenas com a versão 3.1 ou inferior (que seja compatível) do SAMPVOICE.
 
-> [!WARNING]
-> Este include só é compatível até a versão `3.1` do sampvoice.
+## Características Principais
 
------------------------
+- **Sistema de Execução Flexível**
+  - Suporte a operações globais e individuais
+  - Gerenciamento eficiente de callbacks
 
-### Como funciona?
+- **Gerenciamento de Streams**
+  - Stream global automática (inicializada no OnGameModeInit do include)
+  - Streams locais personalizáveis por jogador
+  - Controle granular de distância de voz
 
-Este include opera da seguinte maneira: o usuário simplesmente precisa ativá-lo em seu Gamemode. Além disso, é imperativo que o usuário tenha o [SAMPVOICE](https://github.com/CyberMor/sampvoice) incluído em sua biblioteca e tenha ativado o plugin correspondente no `server.cfg`. No que concerne às funcionalidades, este include é altamente flexível, permitindo ao usuário configurar as mensagens conforme desejado e de maneira personalizada. As callbacks não se limitam a uma única utilização; o usuário pode usá-las quando e onde quiser, tantas vezes quanto necessário. No entanto, suas vantagens não param por aí. Nas callbacks das funções, estão disponíveis opções globais, incluindo definições como `NOT_GLOBAL_VOIP`, que não representam a comunicação global, e `GLOBAL_VOIP`, que a representam. Além disso, este **README** também contém mais duas categorias, explicando detalhadamente as callbacks tanto em contexto global quanto não global, e fornecendo orientações claras sobre sua implementação.
+- **Sistema de Feedback**
+  - Mensagens totalmente personalizáveis
+  - Notificações de status do sistema
+  - Feedback de conexão e microfone
 
------------------------
+- **Recursos Avançados**
+  - Callbacks customizáveis
+  - Acesso direto às streams
+  - Controle preciso de distância de voz
 
-### Como utilizar de forma não global?
+## Sistema Global x Individual
 
-Nesta categoria, encontra-se a explicação de como utilizar todas as callbacks de forma não global.
+O sistema de `GLOBAL_VOIP` e `NOT_GLOBAL_VOIP` determina como as callbacks serão executadas:
 
------------------------
+### GLOBAL_VOIP
+
+- Executa a callback para todos os jogadores conectados
+- Não requer especificação de `playerid`
+- Útil para ações que afetam todos os jogadores simultaneamente
+
+### NOT_GLOBAL_VOIP
+
+- Executa a callback para um jogador específico
+- Requer especificação de `playerid`
+- Útil para ações individuais por jogador
+
+## Configuração Básica
+
+### Inicialização do Sistema
 
 ```pawn
-native Voip_Criar(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a distância.</kbd>    
-3 - <kbd>Defina o máximo de jogadores, SV_INFINITY é padrão.</kbd>    
-4 - <kbd>Defina a cor.</kbd>    
-5 - <kbd>Defina o nome.</kbd>    
-6 - <kbd>Defina o playerid (jogador).</kbd>
+public OnGameModeInit()
+{
+    // Ativar publics padrão
+    Voip_EnableDefaultPublics(true);
+    
+    // A stream global é criada automaticamente pelo include aqui
 
-* Exemplo:
+    return true;
+}
+
+public OnPlayerConnect(playerid)
+{
+    // Criar Voip local para o jogador
+    Voip_Create(NOT_GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local", playerid);
+
+    return true;
+}
+```
+
+## Funções de Controle
+
+### Voip_Create
+
+```pawn
+Voip_Create(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
+```
+Cria uma nova instância de Voip.
+- `VII_global`: Define se a criação afetará todos os jogadores (`GLOBAL_VOIP`) ou um jogador específico (`NOT_GLOBAL_VOIP`)
+- `VII_distance`: Distância máxima de alcance da voz
+- `VII_max_players`: Número máximo de jogadores (use `SV_INFINITY` para ilimitado)
+- `VII_color`: Cor das mensagens
+- `VII_name`: Nome da instância
+- `playerid`: ID do jogador (apenas quando `NOT_GLOBAL_VOIP`)
+
+### Voip_Delete
+
+```pawn
+Voip_Delete(bool:VII_global, playerid = INVALID_PLAYER_ID)
+```
+Remove instância(s) de Voip.
+
+### Voip_Distance
+
+```pawn
+Voip_Distance(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
+```
+Ajusta a distância de alcance da voz.
+
+## Funções de Feedback
+
+### Voip_NotFound
+
+```pawn
+Voip_NotFound(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
+```
+Envia feedback quando o Voip não é detectado.
+
+### Voip_NoMicrophone
+
+```pawn
+Voip_NoMicrophone(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
+```
+Envia feedback quando o microfone não é detectado.
+
+### Voip_Global
+
+```pawn
+Voip_Global(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
+```
+Envia feedback sobre a conexão com o Voip global (criado no OnGameModeInit do include).
+```pawn
+// Exemplo individual
+Voip_Global(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Voip global conectado. Pressione Z para falar.", playerid);
+
+// Exemplo global
+if(IsAdmin[playerid]) // Supondo que seja administrador.
+    Voip_Global(GLOBAL_VOIP, 0xFFFFFFFF, "Voip global conectado para todos. Pressione Z para falar.");
+```
+
+### Voip_Player
+
+```pawn
+Voip_Player(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
+```
+Envia feedback sobre a conexão com o Voip local do jogador.
+```pawn
+// Exemplo individual
+Voip_Player(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Voip local conectado. Pressione B para falar.", playerid);
+
+// Exemplo global
+Voip_Player(GLOBAL_VOIP, 0xFFFFFFFF, "Voip local conectado para todos. Pressione B para falar.");
+```
+
+## Funções de Stream
+
+### Voip_GetGlobalStream
+
+```pawn
+SV_GSTREAM:Voip_GetGlobalStream()
+```
+Retorna a stream global criada no OnGameModeInit do include.
+
+### Voip_GetLocalStream
+
+```pawn
+SV_DLSTREAM:Voip_GetLocalStream(playerid)
+```
+Retorna a stream local de um jogador específico.
+
+### Voip_SetGlobalStream
+
+```pawn
+bool:Voip_SetGlobalStream(SV_GSTREAM:VII_new_stream)
+```
+Define uma nova stream global.
+
+### Voip_SetLocalStream
+
+```pawn
+bool:Voip_SetLocalStream(playerid, SV_DLSTREAM:VII_new_stream)
+```
+Define uma nova stream local para um jogador.
+
+## Exemplos de Uso
+
+### Configuração Completa
+
+Ativar publics padrão:
+```pawn
+public OnGameModeInit()
+{
+    Voip_EnableDefaultPublics(true);
+
+    return true;
+}
+```
+
+Criar Voip local para o jogador específico:
 ```pawn
 public OnPlayerConnect(playerid)
 {
-    Voip_Criar(NOT_GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local", playerid);
-    //
+    Voip_Create(NOT_GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local", playerid);
+    
     return true;
 }
 ```
 
------------------------
-
-```pawn
-native Voip_Excluir(bool:VII_global, playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
-```pawn
-public OnPlayerDisconnect(playerid, reason)
-{
-    Voip_Excluir(NOT_GLOBAL_VOIP, playerid);
-    //
-    return true;
-}
-```
-
------------------------
-
-```pawn
-native Voip_Distancia(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a distância.</kbd>    
-3 - <kbd>Defina a cor.</kbd>    
-4 - <kbd>Defina a mensagem.</kbd>    
-5 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
-```pawn
-CMD:voipdistancia(playerid)
-{
-    Voip_Distancia(NOT_GLOBAL_VOIP, 30.0, 0xFFFFFFFF, "Você ajustou a distância do seu voip para 30 metros.", playerid);
-    //
-    return true;
-}
-```
-
------------------------
-
-```pawn
-native Voip_NaoEncontrado(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
+Enviar feedback do Voip tanto global quanto local para o jogador específico:
 ```pawn
 public OnPlayerSpawn(playerid)
 {
-    Voip_NaoEncontrado(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Seu voip não foi encontrado.", playerid);
-    //
+    if(IsAdmin[playerid]) // Supondo que seja administrador.
+        Voip_Global(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Voip global disponível. Pressione Z para falar.", playerid);
+    
+    Voip_Player(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Voip local ativado. Pressione B para falar.", playerid);
+
     return true;
 }
 ```
 
------------------------
-
+Exemplo de comando que afeta todos os jogadores:
 ```pawn
-native Voip_NaoMicrofone(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
-```pawn
-public OnPlayerSpawn(playerid)
-{
-    Voip_NaoMicrofone(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "Seu microfone não foi detectado.", playerid);
-    //
-    return true;
-}
-```
-
------------------------
-
-```pawn
-native Voip_Global(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
-```pawn
-public OnPlayerSpawn(playerid)
-{
-    Voip_Global(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "O seu voip global foi carregado com sucesso. Pressione a tecla Z para falar.", playerid);
-    //
-    return true;
-}
-```
-
------------------------
-
-```pawn
-native Voip_Jogador(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Defina o playerid (jogador).</kbd>
-
-* Exemplo:
-```pawn
-public OnPlayerSpawn(playerid)
-{
-    Voip_Jogador(NOT_GLOBAL_VOIP, 0xFFFFFFFF, "O seu voip local foi carregado com sucesso. Pressione a tecla B para falar.", playerid);
-    //
-    return true;
-}
-```
-
------------------------
-
-### Como utilizar de forma global?
-
-Nesta categoria, encontra-se a explicação de como utilizar todas as callbacks globalmente. Observem que ao definir uma callback com `GLOBAL_VOIP`, não será necessário especificar o último parâmetro, que é o `playerid`.
-
------------------------
-
-```pawn
-native Voip_Criar(bool:VII_global, Float:VII_distance, VII_max_players, VII_color, const VII_name[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a distância.</kbd>    
-3 - <kbd>Defina o máximo de jogadores, SV_INFINITY é padrão.</kbd>    
-4 - <kbd>Defina a cor.</kbd>    
-5 - <kbd>Defina o nome.</kbd>    
-6 - <kbd>Não defina o playerid, apague-o.</kbd>
-
-* Exemplo:
-```pawn
-CMD:criarvoip(playerid)
+CMD:voipglobaldist(playerid)
 {
     if(IsPlayerAdmin(playerid))
-        Voip_Criar(GLOBAL_VOIP, 25.0, SV_INFINITY, 0xFFFFFFFF, "Local");
-    //
+        // Altera a distância do Voip para todos os jogadores
+        Voip_Distance(GLOBAL_VOIP, 50.0, 0xFFFFFFFF, "Administrador alterou a distância do Voip para 50 metros.");
+    
     return true;
 }
 ```
 
------------------------
+## Callbacks Personalizados
+
+Se você desativou as publics padrão usando `Voip_EnableDefaultPublics(false)`, pode implementar seus próprios callbacks:
 
 ```pawn
-native Voip_Excluir(bool:VII_global, playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Não defina o playerid, apague-o.</kbd>
-
-* Exemplo:
-```pawn
-CMD:excluirvoip(playerid)
+public SV_VOID:OnPlayerActivationKeyPress(SV_UINT:playerid, SV_UINT:keyid)
 {
-    if(IsPlayerAdmin(playerid))
-        Voip_Excluir(GLOBAL_VOIP);
-    //
-    return true;
+    // Seu código personalizado aqui
+    // keyid 0x42 (B) para Voip local
+    // keyid 0x5A (Z) para Voip global
 }
-```
 
------------------------
-
-```pawn
-native Voip_Distancia(bool:VII_global, Float:VII_distance, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a distância.</kbd>    
-3 - <kbd>Defina a cor.</kbd>    
-4 - <kbd>Defina a mensagem.</kbd>    
-5 - <kbd>Não defina o playerid, apague-o.</kbd>
-
-* Exemplo:
-```pawn
-CMD:voipdistancia(playerid)
+public SV_VOID:OnPlayerActivationKeyRelease(SV_UINT:playerid, SV_UINT:keyid)
 {
-    if(IsPlayerAdmin(playerid))
-        Voip_Distancia(GLOBAL_VOIP, 30.0, 0xFFFFFFFF, "O administrador ajustou a distância do voip para 30 metros.");
-    //
-    return true;
+    // Seu código personalizado aqui
 }
 ```
 
------------------------
+## Licença
 
-```pawn
-native Voip_NaoEncontrado(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Não defina o playerid, apague-o.</kbd>
+Este Include está protegido sob a Licença Apache 2.0, que permite:
 
-* Exemplo:
-```pawn
-CMD:voipencontrado(playerid)
-{
-    if(IsPlayerAdmin(playerid))
-        Voip_NaoEncontrado(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, mas o seu voip não foi encontrado.");
-    //
-    return true;
-}
-```
+- ✔️ Uso comercial e privado
+- ✔️ Modificação do código fonte
+- ✔️ Distribuição do código
+- ✔️ Concessão de patentes
 
------------------------
+### Condições:
 
-```pawn
-native Voip_NaoMicrofone(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Não defina o playerid, apague-o.</kbd>
+- Manter o aviso de direitos autorais
+- Documentar alterações significativas
+- Incluir cópia da licença Apache 2.0
 
-* Exemplo:
-```pawn
-CMD:voipmicrofone(playerid)
-{
-    if(IsPlayerAdmin(playerid))
-        Voip_NaoMicrofone(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, mas o seu microfone não foi detectado.");
-    //
-    return true;
-}
-```
+Para mais detalhes sobre a licença: http://www.apache.org/licenses/LICENSE-2.0
 
------------------------
-
-```pawn
-native Voip_Global(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Não defina o playerid, apague-o.</kbd>
-
-* Exemplo:
-```pawn
-CMD:voipglobal(playerid)
-{
-    if(IsPlayerAdmin(playerid))
-        Voip_Global(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, e seu voip global foi encontrado. Pressione a tecla Z para falar.");
-    //
-    return true;
-}
-```
-
------------------------
-
-```pawn
-native Voip_Jogador(bool:VII_global, VII_color, const VII_message[], playerid = INVALID_PLAYER_ID)
-```
-1 - <kbd>Defina se é global.</kbd>    
-2 - <kbd>Defina a cor.</kbd>    
-3 - <kbd>Defina a mensagem.</kbd>    
-4 - <kbd>Não defina o playerid, apague-o.</kbd>
-
-* Exemplo:
-```pawn
-CMD:voipjogador(playerid)
-{
-    if(IsPlayerAdmin(playerid))
-        Voip_Jogador(GLOBAL_VOIP, 0xFFFFFFFF, "O administrador fez uma verificação no servidor, e seu voip local foi encontrado. Pressione a tecla B para falar.");
-    //
-    return true;
-}
-```
-
------------------------
-
-### Outras callbacks
-
-```pawn
-Voip_Depurar(bool:VII_debug = SV_FALSE)
-```
-
-* Exemplo:
-```pawn
-CMD:ativarlogsvoip(playerid)
-{
-    if(IsPlayerAdmin(playerid))
-        Voip_Depurar(true); // Para desativar retire o "true" e nao defina nenhum parâmetro.
-    //
-    return true;
-}
-```
-
------------------------
-
-### Informações de contato
-
-Instagram: [ocalasans](https://instagram.com/ocalasans)   
-YouTube: [Calasans](https://www.youtube.com/@ocalasans)   
-Discord: ocalasans   
-Comunidade: [SA:MP Programming Community©](https://abre.ai/samp-spc)
+**Copyright (c) Calasans - Todos os direitos reservados**
